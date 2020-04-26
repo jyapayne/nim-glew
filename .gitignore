@@ -1,0 +1,11 @@
+*
+!/**/
+!*.*
+
+nimcache/
+nimblecache/
+htmldocs/
+build
+
+*.out
+.DS_Store
