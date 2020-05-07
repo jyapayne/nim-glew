@@ -1,11 +1,10 @@
-import os, strutils, strformat
+import os, strutils
 import nimterop/[cimport, build]
 
 const
   ProjectCacheDir* = getProjectCacheDir("nimglew")
   baseDir = ProjectCacheDir
   srcDir = baseDir / "glew"
-  buildDir = srcDir / "buildcache"
   symbolPluginPath = currentSourcePath.parentDir() / "cleansymbols.nim"
 
 getHeader(
