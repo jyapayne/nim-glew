@@ -1,2 +1,2 @@
-# nimterop-template
-Template for nimterop projects
+# GLEW
+Glew wrapper in Nim using Nimterop
