@@ -15,13 +15,27 @@ proc nothing(m: RegexMatch, s: string): string =
     return s[m.group(0)[0]]
 
 const replacements = [
-  re"^PREFIX_(.)",
+  re"^glew(.)",
 ]
 
 const underscoreReg = re"_(.)"
 
 # Symbol renaming examples
 proc onSymbol*(sym: var Symbol) {.exportc, dynlib.} =
+  if sym.name.startsWith("GL_BYTE"):
+    sym.name = "CGL_BYTE"
+  if sym.name.startsWith("GL_SHORT"):
+    sym.name = "CGL_SHORT"
+  if sym.name.startsWith("GL_INT"):
+    sym.name = "CGL_INT"
+  if sym.name.startsWith("GL_FLOAT"):
+    sym.name = "CGL_FLOAT"
+  if sym.name.startsWith("GL_DOUBLE"):
+    sym.name = "CGL_DOUBLE"
+  if sym.name.startsWith("GL_FIXED"):
+    sym.name = "CGL_FIXED"
+  if sym.name.startsWith("PFNGLGETTRANSFORMFEEDBACKIVPROC"):
+    sym.name = "CPFNGLGETTRANSFORMFEEDBACKIVPROC"
   if sym.kind == nskProc or sym.kind == nskType or sym.kind == nskConst:
     if sym.name != "_":
       sym.name = sym.name.strip(chars={'_'}).replace("__", "_")

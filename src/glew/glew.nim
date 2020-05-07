@@ -2,18 +2,17 @@ import os, strutils, strformat
 import nimterop/[cimport, build]
 
 const
-  ProjectCacheDir* = currentSourcePath.parentDir().parentDir() / "build" #getProjectCacheDir("nimsdl2")
-  baseDir = SDLCacheDir
-  srcDir = baseDir / "sdl2"
+  ProjectCacheDir* = getProjectCacheDir("nimglew")
+  baseDir = ProjectCacheDir
+  srcDir = baseDir / "glew"
   buildDir = srcDir / "buildcache"
   symbolPluginPath = currentSourcePath.parentDir() / "cleansymbols.nim"
 
 getHeader(
-  "template.h",
-  dlurl = "https://download.com/template-$1.tar.gz",
+  "glew.h",
+  dlurl = "https://github.com/nigels-com/glew/releases/download/glew-$1/glew-$1.zip",
   outdir = srcDir,
-  cmakeFlags = "-F flag",
-  conFlags = "-F flag"
+  altNames = "libGLEW"
 )
 
 static:
@@ -28,12 +27,10 @@ static:
   # let contents = readFile(srcDir/"src"/"dynapi"/"SDL_dynapi_procs.h")
   # writeFile(srcDir/"src"/"dynapi"/"SDL_dynapi_procs.c", contents
 
-cOverride:
-  discard
 
 cPluginPath(symbolPluginPath)
 
-when defined(Project_Static):
-  cImport(Project_Path, recurse = true, flags = "-f=ast2 -E__,_ -F__,_")
+when defined(glewStatic):
+  cImport(glewPath, recurse = true, flags = "-f=ast2 -E__,_ -F__,_")
 else:
-  cImport(Project_Path, recurse = true, dynlib = "Project_LPath", flags = "-f=ast2 -E__,_ -F__,_")
+  cImport(glewPath, recurse = true, dynlib = "glewLPath", flags = "-f=ast2 -E__,_ -F__,_")
