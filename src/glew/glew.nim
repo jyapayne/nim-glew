@@ -1,5 +1,5 @@
 import os, strutils, strformat
-import nimterop/[cimport, build]
+import nimterop/[cimport, build, globals]
 
 const
   ProjectCacheDir* = getProjectCacheDir("nimglew")

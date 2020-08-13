@@ -22,6 +22,8 @@ const underscoreReg = re"_(.)"
 
 # Symbol renaming examples
 proc onSymbol*(sym: var Symbol) {.exportc, dynlib.} =
+  if sym.name.startsWith("__"):
+    sym.name = sym.name[2..<sym.name.len]
   if sym.name.startsWith("GL_BYTE"):
     sym.name = "CGL_BYTE"
   if sym.name.startsWith("GL_SHORT"):
@@ -56,3 +58,6 @@ proc onSymbol*(sym: var Symbol) {.exportc, dynlib.} =
     sym.name = sym.name.replace(underscoreReg, camelCase)
     if sym.name == "type":
       sym.name = "kind"
+
+  if sym.name.startsWith("GetTransformFeedbacki_v"):
+    sym.name = sym.name & "u"
