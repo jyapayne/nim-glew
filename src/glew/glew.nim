@@ -9,6 +9,8 @@ const
   includeDir = srcDir / "include"
   symbolPluginPath = currentSourcePath.parentDir() / "cleansymbols.nim"
 
+setDefines(@["glewSetVer=2.1.0", "glewDL", "glewStatic"])
+
 when defined(windows):
   when defined(amd64):
     const flags = &"--libdir={buildDir} --includedir={includeDir} --host=x86_64-w64-mingw32"
@@ -27,7 +29,7 @@ getHeader(
   "glew.h",
   dlurl = "https://github.com/nigels-com/glew/releases/download/glew-$1/glew-$1.zip",
   outdir = srcDir,
-  altNames = "libGLEW",
+  altNames = "libGLEW,glew,libglew",
   conFlags = flags,
   buildTypes = [btAutoConf]
 )
@@ -36,20 +38,14 @@ cIncludeDir(includeDir)
 
 static:
   discard
-  # gitPull("https://github.com/lib/project", outdir=srcDir, plist="""
-# src/*.h
-# src/*.c
-# """, checkout = "1f9c8864fc556a1be4d4bf1d6bfe20cde25734b4")
   # cSkipSymbol @[]
   # cDebug()
   # cDisableCaching()
-  # let contents = readFile(srcDir/"src"/"dynapi"/"SDL_dynapi_procs.h")
-  # writeFile(srcDir/"src"/"dynapi"/"SDL_dynapi_procs.c", contents
 
 
 cPluginPath(symbolPluginPath)
 
-when defined(glewStatic):
+when isDefined(glewStatic):
   cImport(glewPath, recurse = true, flags = "-f=ast2 -H -E__,_ -F__,_")
 else:
   cImport(glewPath, recurse = true, dynlib = "glewLPath", flags = "-f=ast2 -H -E__,_ -F__,_")
