@@ -12,7 +12,6 @@ template camelCase(str: string): string =
     else:
       res.add(str[i])
     i += 1
-  res[0] = res[0].toUpperAscii
   res
 
 template lowerFirstLetter(str, rep: string): string =
