@@ -4,11 +4,14 @@ import sets
 
 template camelCase(str: string): string =
   var res = newStringOfCap(str.len)
-  for i in 0..<str.len:
+  var i = 0
+  while i < str.len:
     if str[i] == '_' and i < str.len - 1:
       res.add(str[i+1].toUpperAscii)
+      i += 1
     else:
       res.add(str[i])
+    i += 1
   res
 
 template lowerFirstLetter(str, rep: string): string =
@@ -19,7 +22,7 @@ template lowerFirstLetter(str, rep: string): string =
   else:
     str
 
-template nothing(str, rep: string): string =
+template removeBeginning(str, rep: string): string =
   if str.startsWith(rep):
     str[rep.len .. ^1]
   else:
@@ -56,7 +59,7 @@ proc onSymbol*(sym: var Symbol) {.exportc, dynlib.} =
     if sym.kind == nskProc:
       sym.name = lowerFirstLetter(sym.name, rep)
     else:
-      sym.name = nothing(sym.name, rep)
+      sym.name = removeBeginning(sym.name, rep)
 
   if sym.kind == nskField:
     sym.name = camelCase(sym.name)
