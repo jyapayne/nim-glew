@@ -10,4 +10,4 @@ srcDir        = "src"
 
 # Dependencies
 
-requires "nim >= 1.0.6", "https://github.com/jyapayne/nimterop#367ec05", "regex >= 0.14.1"
+requires "nim >= 1.0.6", "https://github.com/jyapayne/nimterop#367ec05"

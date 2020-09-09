@@ -1,24 +1,33 @@
 import macros, nimterop / plugin
-import strutils, regex
+import strutils
 import sets
 
-proc firstLetterLower(m: RegexMatch, s: string): string =
-  if m.groupsCount > 0 and m.group(0).len > 0:
-    return s[m.group(0)[0]].toLowerAscii
+template camelCase(str: string): string =
+  var res = newStringOfCap(str.len)
+  for i in 0..<str.len:
+    if str[i] == '_' and i < str.len - 1:
+      res.add(str[i+1].toUpperAscii)
+    else:
+      res.add(str[i])
+  res
 
-proc camelCase(m: RegexMatch, s: string): string =
-  if m.groupsCount > 0 and m.group(0).len > 0:
-    return s[m.group(0)[0]].toUpperAscii
+template lowerFirstLetter(str, rep: string): string =
+  if str.startsWith(rep):
+    var res = str[rep.len .. ^1]
+    res[0] = res[0].toLowerAscii
+    res
+  else:
+    str
 
-proc nothing(m: RegexMatch, s: string): string =
-  if m.groupsCount > 0 and m.group(0).len > 0:
-    return s[m.group(0)[0]]
+template nothing(str, rep: string): string =
+  if str.startsWith(rep):
+    str[rep.len .. ^1]
+  else:
+    str
 
 const replacements = [
-  re"^glew(.)",
+  "glew",
 ]
-
-const underscoreReg = re"_(.)"
 
 # Symbol renaming examples
 proc onSymbol*(sym: var Symbol) {.exportc, dynlib.} =
@@ -38,24 +47,19 @@ proc onSymbol*(sym: var Symbol) {.exportc, dynlib.} =
     sym.name = "CGL_FIXED"
   if sym.name.startsWith("PFNGLGETTRANSFORMFEEDBACKIVPROC"):
     sym.name = "CPFNGLGETTRANSFORMFEEDBACKIVPROC"
+
   if sym.kind == nskProc or sym.kind == nskType or sym.kind == nskConst:
     if sym.name != "_":
       sym.name = sym.name.strip(chars={'_'}).replace("__", "_")
 
   for rep in replacements:
     if sym.kind == nskProc:
-      try:
-        sym.name = sym.name.replace(rep, firstLetterLower)
-      except:
-        discard
+      sym.name = lowerFirstLetter(sym.name, rep)
     else:
-      try:
-        sym.name = sym.name.replace(rep, nothing)
-      except:
-        discard
+      sym.name = nothing(sym.name, rep)
 
   if sym.kind == nskField:
-    sym.name = sym.name.replace(underscoreReg, camelCase)
+    sym.name = camelCase(sym.name)
     if sym.name == "type":
       sym.name = "kind"
 
