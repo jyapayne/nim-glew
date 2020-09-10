@@ -6,6 +6,7 @@ nimcache/
 nimblecache/
 htmldocs/
 build
+generated/
 
 *.out
 .DS_Store

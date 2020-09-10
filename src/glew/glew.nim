@@ -1,3 +1,4 @@
+import macros
 import os, strutils, strformat
 import nimterop/[cimport, build, globals]
 
@@ -7,6 +8,8 @@ const
   srcDir = baseDir / "glew"
   buildDir = srcDir / "lib"
   includeDir = srcDir / "include"
+  currentPath = getProjectPath().parentDir().sanitizePath
+  generatedPath = (currentPath / "generated" / "glew").replace("\\", "/")
   symbolPluginPath = currentSourcePath.parentDir() / "cleansymbols.nim"
 
 setDefines(@["glewSetVer=2.1.0", "glewDL", "glewStatic"])
@@ -46,6 +49,6 @@ static:
 cPluginPath(symbolPluginPath)
 
 when isDefined(glewStatic):
-  cImport(glewPath, recurse = true, flags = "-f=ast2 -H -E__,_ -F__,_")
+  cImport(glewPath, recurse = true, flags = "-f=ast2 -H -E__,_ -F__,_", nimFile = generatedPath / "glew.nim")
 else:
-  cImport(glewPath, recurse = true, dynlib = "glewLPath", flags = "-f=ast2 -H -E__,_ -F__,_")
+  cImport(glewPath, recurse = true, dynlib = "glewLPath", flags = "-f=ast2 -H -E__,_ -F__,_", nimFile = generatedPath / "glew.nim")
