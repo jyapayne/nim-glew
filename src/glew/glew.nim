@@ -1,6 +1,8 @@
 import macros
-import os, strutils, strformat
-import nimterop/[cimport, build, globals]
+import os except findExe
+import strutils, strformat
+import nimterop / [cimport, build, globals]
+import nimterop / build / [tools, shell]
 
 const
   ProjectCacheDir* = getProjectCacheDir("nimglew")
@@ -32,8 +34,9 @@ getHeader(
   "glew.h",
   dlurl = "https://github.com/nigels-com/glew/releases/download/glew-$1/glew-$1.zip",
   outdir = srcDir,
-  altNames = "libGLEW,glew,libglew",
+  altNames = "libGLEW,glew,libglew,libglew32",
   conFlags = flags,
+  makeFlags = "glew.lib",
   buildTypes = [btAutoConf]
 )
 
