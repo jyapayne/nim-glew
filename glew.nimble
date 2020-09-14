@@ -10,4 +10,4 @@ srcDir        = "src"
 
 # Dependencies
 
-requires "nim >= 1.0.6", "https://github.com/jyapayne/nimterop#head"
+requires "nim >= 1.0.6", "https://github.com/jyapayne/nimterop#head", "https://github.com/jyapayne/nim-glfw#head"
